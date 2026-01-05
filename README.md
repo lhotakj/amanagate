@@ -2,7 +2,7 @@
 Simple script to install unbound on raspberry with parental control. Tested on Raspberry Pi Zero running DietPi.
 
 
-# Basic installation
+# 🚩 Basic installation
 ## Clone the repository
 
 ```sh
@@ -28,7 +28,7 @@ Simply test one of the host defines in the host like file, eg.
  dig @localhost amd
 ```
 
-# Parental Control
+# ⛔ Parental Control
 ## Add parental control
 ```sh
 sudo ./add-parental-control.sh <path to the ini file>
@@ -60,7 +60,7 @@ sudo ./add-parental-control.sh ./conf/jonas.ini
 sudo ./add-parental-control.sh ./conf/jonas.ini
 ```
 
-# Debugging hints
+# 🪲 Debugging / testing hints
 
 ## Test if parental block works (domain `youtube.com` on host `10.0.2.2` is blacklisted and it's outside allowed time)
 ```
