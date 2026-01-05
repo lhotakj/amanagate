@@ -168,7 +168,7 @@ mkdir -p "$UNBOUND_DIR/unbound.conf.d"
   for ip in "${devices[@]}"; do
     echo "  access-control: $ip allow"
   done
-  echo "  include: \"$CURRENT_FILE\""
+  echo "  include: $CURRENT_FILE
 } > "$VIEW_FILE"
 
 ############################################
