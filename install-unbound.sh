@@ -15,7 +15,7 @@ fi
 
 echo "=== Installing Unbound, Unbound Archor, and Dig ==="
 apt update
-apt install -y -q unbound unbound-anchor dnsutils
+apt install -y -q unbound unbound-anchor dnsutils at
 
 echo "=== Creating directories ==="
 mkdir -p /etc/unbound/custom
