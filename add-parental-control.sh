@@ -63,38 +63,20 @@ fi
 ############################################
 
 kid_name=$(awk -F= '
-  /^
-
-\[metadata\]
-
-/{flag=1;next}
-  /^
-
-\[/{flag=0}
+  /^\[metadata\]/{flag=1;next}
+  /^\[/{flag=0}
   flag && $0 !~ /^#/ && $1=="kid_name" {print $2}
 ' "$INI_FILE")
 
 mapfile -t allow_cron < <(awk -F= '
-  /^
-
-\[metadata\]
-
-/{flag=1;next}
-  /^
-
-\[/{flag=0}
+  /^\[metadata\]/{flag=1;next}
+  /^\[/{flag=0}
   flag && $0 !~ /^#/ && $1=="allow_cron" {print $2}
 ' "$INI_FILE")
 
 mapfile -t block_cron < <(awk -F= '
-  /^
-
-\[metadata\]
-
-/{flag=1;next}
-  /^
-
-\[/{flag=0}
+  /^\[metadata\]/{flag=1;next}
+  /^\[/{flag=0}
   flag && $0 !~ /^#/ && $1=="block_cron" {print $2}
 ' "$INI_FILE")
 
@@ -118,14 +100,8 @@ fi
 ############################################
 
 mapfile -t domains < <(awk '
-  /^
-
-\[domains\]
-
-/{flag=1;next}
-  /^
-
-\[/{flag=0}
+  /^\[domains\]/{flag=1;next}
+  /^\[/{flag=0}
   flag && $0 !~ /^#/ && NF
 ' "$INI_FILE")
 
@@ -134,14 +110,8 @@ mapfile -t domains < <(awk '
 ############################################
 
 mapfile -t devices < <(awk '
-  /^
-
-\[devices\]
-
-/{flag=1;next}
-  /^
-
-\[/{flag=0}
+  /^\[devices\]/{flag=1;next}
+  /^\[/{flag=0}
   flag && $0 !~ /^#/ && NF
 ' "$INI_FILE")
 
