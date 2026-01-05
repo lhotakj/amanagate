@@ -162,12 +162,15 @@ ln -sf "$ALLOW_FILE" "$CURRENT_FILE"
 mkdir -p "$UNBOUND_DIR/unbound.conf.d"
 
 {
+  echo "server:"
+  for ip in "${devices[@]}"; do
+    echo "  access-control: $ip allow"
+    echo "  access-control-view: $ip $kid_name"
+  done
+
   echo "view:"
   echo "  name: \"$kid_name\""
   echo "  view-first: yes"
-  for ip in "${devices[@]}"; do
-    echo "  access-control: $ip allow"
-  done
   echo "  include: $CURRENT_FILE"
 } > "$VIEW_FILE"
 
