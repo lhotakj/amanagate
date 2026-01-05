@@ -13,9 +13,9 @@ if [ ! -f "$HOST_FILE" ]; then
   exit 2
 fi
 
-echo "=== Installing Unbound ==="
+echo "=== Installing Unbound, Unbound Archor, and Dig ==="
 apt update
-apt install -y -q unbound unbound-anchor
+apt install -y -q unbound unbound-anchor dnsutils
 
 echo "=== Creating directories ==="
 mkdir -p /etc/unbound/custom
