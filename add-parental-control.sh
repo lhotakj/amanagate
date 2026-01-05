@@ -168,7 +168,7 @@ mkdir -p "$UNBOUND_DIR/unbound.conf.d"
   echo ""
 
   for ip in "${devices[@]}"; do
-    echo "  match-client-ip: $ip"
+    echo "  access-control: $ip allow"
   done
 
   echo ""
