@@ -1,6 +1,7 @@
 # unbound-parental-control
 Simple script to install unbound on raspberry with parental control. Tested on Raspberry Pi Zero running DietPi.
 
+# Basic installation
 ## Install Unbound and setup the local-lan 
 Install the unbound and sets the upstream servers to AdGuard DNS servers blocking ads and sets custom A records defined in the hosts like file
 ```sh
@@ -12,11 +13,17 @@ Example:
 sudo ./install-unbound.sh ./conf/local-lan.txt
 ```
 
+## Test if local A type addreses are properly set
+Simply test one of the host defines in the host like file, eg.
+```sh
+ dig @localhost amd
+```
+
+# Parental Control
 ## Add parental control
 ```sh
 sudo ./add-parental-control.sh <path to the ini file>
 ```
-
 The ini file has to be in the following format:
 ```ini
 [metadata]
@@ -39,9 +46,7 @@ Example:
 sudo ./add-parental-control.sh ./conf/jonas.ini
 ```
 
-
 ## Remove parental control
-
 ```sh
 sudo ./add-parental-control.sh ./conf/jonas.ini
 ```
