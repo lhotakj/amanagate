@@ -1,6 +1,18 @@
 #!/bin/bash
 set -e
 
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 path_to_host_file"
+  exit 1
+fi
+
+HOST_FILE="$1"
+
+if [ ! -f "$HOST_FILE" ]; then
+  echo "Error: Host file '$HOST_FILE' not found."
+  exit 2
+fi
+
 echo "=== Installing Unbound ==="
 apt update
 apt install -y unbound 
@@ -10,13 +22,12 @@ mkdir -p /etc/unbound/custom
 
 echo "=== Creating LAN DNS overrides ==="
 cat > /etc/unbound/custom/local-lan.conf <<EOF
-local-data: "portainer.home.lhotak.net A 10.0.0.100"
-local-data: "paperless.home.lhotak.net A 10.0.0.100"
-local-data: "emby.home.lhotak.net A 10.0.0.100"
-local-data: "emby.local A 10.0.0.100"
-local-data: "amd A 10.0.1.2"
-local-data: "home A 10.0.0.100"
-local-data: "printer A 10.0.0.8"
+$(grep -v '^\s*#' "$HOST_FILE" | grep -v '^\s*$' | while read -r ip name; do
+    # Skip lines that don't have both IP and domain
+    if [[ -n "$ip" && -n "$name" ]]; then
+      echo "local-data: \"$name A $ip\""
+    fi
+done)
 EOF
 
 echo "=== Writing minimal Unbound config (no global blocking) ==="
