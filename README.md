@@ -1,7 +1,16 @@
 # unbound-parental-control
 Simple script to install unbound on raspberry with parental control. Tested on Raspberry Pi Zero running DietPi.
 
+
 # Basic installation
+## Clone the repository
+
+```sh
+cd /tmp
+git clone https://github.com/lhotakj/unbound-parental-control.git
+cd unbound-parental-control
+```
+
 ## Install Unbound and setup the local-lan 
 Install the unbound and sets the upstream servers to AdGuard DNS servers blocking ads and sets custom A records defined in the hosts like file
 ```sh
