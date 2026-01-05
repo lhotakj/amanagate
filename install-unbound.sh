@@ -15,7 +15,7 @@ fi
 
 echo "=== Installing Unbound ==="
 apt update
-apt install -y unbound 
+apt install -y -q unbound unbound-anchor
 
 echo "=== Creating directories ==="
 mkdir -p /etc/unbound/custom
