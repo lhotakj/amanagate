@@ -1,0 +1,8 @@
+10.0.0.100 portainer.home.lhotak.net
+10.0.0.100 paperless.home.lhotak.net
+10.0.0.100 emby.home.lhotak.net
+10.0.0.100 emby.local
+10.0.1.2   amd
+10.0.0.100 home
+10.0.0.8   printer
+  
