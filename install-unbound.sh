@@ -54,10 +54,12 @@ EOF
 echo "=== Running unbound-archor ==="
 sudo unbound-anchor -a /var/lib/unbound/root.key
 
+echo "=== Checking configuration ==="
+unbound-checkconf
+
 echo "=== Creating unbound-control keys ==="
 sudo unbound-control-setup
 
 echo "=== Restarting Unbound ==="
-unbound-checkconf
 systemctl restart unbound
 systemctl enable unbound
