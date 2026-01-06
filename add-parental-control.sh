@@ -207,29 +207,45 @@ unbound-control reload || systemctl reload unbound
 ### TRIGGER THE CRON TO APPLY THE RULE
 ############################################
 
-echo "Triggering cron to apply the rule..."
+echo "Determining which rule to apply .."
 
-now=$(date '+%M %H %d %m %u')
-symlink_set=0
+# Get current timestamp
+now_ts=$(date +%s)
+last_allow_ts=0
+last_block_ts=0
 
-for i in "${!allow_cron[@]}"; do
-  cron_expr="${allow_cron[$i]}"
-  if [[ $(echo "$now $cron_expr" | awk '{exit system("echo \""$0"\" | at now") == 0 ? 0 : 1}') -eq 0 ]]; then
-    ln -sf "$ALLOW_FILE" "$CURRENT_FILE"
-    symlink_set=1
-    break
+# Find the most recent allow_cron time
+for cron_expr in "${allow_cron[@]}"; do
+  cron_time=$(echo "$cron_expr" | awk '{print $1, $2, $3, $4, $5}')
+  ts=$(date -d "$(echo "$cron_time" | awk '{print $2":"$1" "$3" "$4" *"}')" +%s 2>/dev/null)
+  if [[ $ts && $ts -le $now_ts && $ts -gt $last_allow_ts ]]; then
+    last_allow_ts=$ts
   fi
 done
 
-if [[ $symlink_set -eq 0 ]]; then
-  for i in "${!block_cron[@]}"; do
-    cron_expr="${block_cron[$i]}"
-    if [[ $(echo "$now $cron_expr" | awk '{exit system("echo \""$0"\" | at now") == 0 ? 0 : 1}') -eq 0 ]]; then
-      ln -sf "$BLOCK_FILE" "$CURRENT_FILE"
-      break
-    fi
-  done
+# Find the most recent block_cron time
+for cron_expr in "${block_cron[@]}"; do
+  cron_time=$(echo "$cron_expr" | awk '{print $1, $2, $3, $4, $5}')
+  ts=$(date -d "$(echo "$cron_time" | awk '{print $2":"$1" "$3" "$4" *"}')" +%s 2>/dev/null)
+  if [[ $ts && $ts -le $now_ts && $ts -gt $last_block_ts ]]; then
+    last_block_ts=$ts
+  fi
+done
+
+# Decide which rule to apply
+if [[ $last_allow_ts -ge $last_block_ts ]]; then
+  echo "Applying allow rule for $rule ..."
+  ln -sf "$ALLOW_FILE" "$CURRENT_FILE"
+  echo "Reloading Unbound..."
+  unbound-control reload || systemctl reload unbound
+else
+  echo "Applying block rule for $rule ..."
+  ln -sf "$BLOCK_FILE" "$CURRENT_FILE"
+  echo "Reloading Unbound..."
+  unbound-control reload || systemctl reload unbound
 fi
+
+
 
 ############################################
 ### DONE
