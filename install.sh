@@ -22,6 +22,7 @@ apt install -y -q unbound unbound-anchor dnsutils
 
 echo "=== Creating directories ==="
 mkdir -p /etc/unbound/custom
+mkdir -p /etc/unbound/unbound.conf.d
 
 echo "=== Creating LAN DNS overrides ==="
 cat > /etc/unbound/custom/local-lan.conf <<EOF
@@ -37,7 +38,7 @@ echo "=== Writing minimal Unbound config (no global blocking) ==="
 cat > /etc/unbound/unbound.conf <<EOF
 server:
     interface: 0.0.0.0         # Listen on all IPv4 addresses
-    interface: ::0             # Listen on all IPv6 addresses    
+    interface: ::0             # Listen on all IPv6 addresses
     access-control: 0.0.0.0/0 allow
     include: /etc/unbound/custom/local-lan.conf
     include: /etc/unbound/unbound.conf.d/*.conf
@@ -55,15 +56,18 @@ remote-control:
   control-port: 8953
 EOF
 
-echo "=== Running unbound-archor ==="
-sudo unbound-anchor -a /var/lib/unbound/root.key
-
-echo "=== Checking configuration ==="
-unbound-checkconf
+echo "=== Running unbound-anchor ==="
+# unbound-anchor returns 1 if the key was updated, which is not an error
+sudo unbound-anchor -a /var/lib/unbound/root.key || true
 
 echo "=== Creating unbound-control keys ==="
 sudo unbound-control-setup
 
+echo "=== Checking configuration ==="
+unbound-checkconf
+
 echo "=== Restarting Unbound ==="
 systemctl restart unbound
 systemctl enable unbound
+
+echo "=== Done ==="

@@ -40,6 +40,15 @@ EOF
   exit 0
 }
 
+# Function to reload Unbound safely
+reload_unbound() {
+  if systemctl is-active --quiet unbound; then
+    unbound-control reload 2>/dev/null || systemctl reload unbound
+  else
+    systemctl restart unbound
+  fi
+}
+
 # Handle help
 if [[ "$1" == "--help" || "$1" == "-h" ]]; then
   show_help
@@ -202,13 +211,13 @@ echo "Installing cron schedule..."
 ############################################
 
 echo "Reloading Unbound..."
-unbound-control reload || systemctl reload unbound
+reload_unbound
 
 ############################################
 ### TRIGGER THE CRON TO APPLY THE RULE
 ############################################
 
-echo "Determining which rule to apply .."
+echo "Determining which rule to apply ..."
 
 # Returns 0 if $2 matches $1 (cron DOW field, e.g. "1,2,5-7"), else 1
 cron_dow_match() {
@@ -284,11 +293,11 @@ done
 if [[ $best_type == "allow" ]]; then
   echo "Applying allow rule: $best_rule"
   ln -sf "$ALLOW_FILE" "$CURRENT_FILE"
-  unbound-control reload || systemctl reload unbound
+  reload_unbound
 elif [[ $best_type == "block" ]]; then
   echo "Applying block rule: $best_rule"
   ln -sf "$BLOCK_FILE" "$CURRENT_FILE"
-  unbound-control reload || systemctl reload unbound
+  reload_unbound
 else
   echo "Unexpectedly no rule matched"
 fi

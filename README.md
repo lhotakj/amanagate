@@ -28,7 +28,6 @@ _Service_: Unbound DNS / cron
 
 ```sh
 rm -rf /opt/amanagate
-mkdir -p /opt/amanagate
 git clone https://github.com/lhotakj/amanagate.git /opt/amanagate 
 cd /opt/amanagate
 ```
