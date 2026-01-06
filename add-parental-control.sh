@@ -185,14 +185,14 @@ echo "Installing cron schedule..."
   echo "# Automatically generated — do not edit manually"
   echo ""
 
-  for rule in "${allow_cron[@]}"; do
-    echo "$rule root ln -sf $ALLOW_FILE $CURRENT_FILE && unbound-control reload"
+  for cron_rule in "${allow_cron[@]}"; do
+    echo "$cron_rule root ln -sf $ALLOW_FILE $CURRENT_FILE && unbound-control reload"
   done
 
   echo ""
 
-  for rule in "${block_cron[@]}"; do
-    echo "$rule root ln -sf $BLOCK_FILE $CURRENT_FILE && unbound-control reload"
+  for cron_rule in "${block_cron[@]}"; do
+    echo "$cron_rule root ln -sf $BLOCK_FILE $CURRENT_FILE && unbound-control reload"
   done
 } > "$CRON_FILE"
 
@@ -242,13 +242,10 @@ get_last_cron_time() {
       cron_dow=$dow
     fi
 
-    echo "DEBUG: cron='$cron_expr' checking $y-$m-$d dow=$cron_dow against cdow=$cdow" >&2
-
     if [[ ($cday == "*" || $cday -eq $d) && \
           ($cmon == "*" || $cmon -eq $m) ]] && \
        cron_dow_match "$cdow" "$cron_dow"; then
       tstamp=$(date -d "$y-$m-$d $chour:$cmin:00" +%s 2>/dev/null)
-      echo "DEBUG: day matched, tstamp=$tstamp now=$now_ts" >&2
       if [[ -n $tstamp && $tstamp -le $now_ts ]]; then
         echo $tstamp
         return
@@ -258,12 +255,10 @@ get_last_cron_time() {
   echo 0
 }
 
-
-
 now_ts=$(date +%s)
 best_ts=0
 best_type=""
-best_idx=-1
+best_rule=""
 
 # Check all allow_cron rules
 for idx in "${!allow_cron[@]}"; do
@@ -271,8 +266,7 @@ for idx in "${!allow_cron[@]}"; do
   if [[ $ts -gt $best_ts ]]; then
     best_ts=$ts
     best_type="allow"
-    best_idx=$idx
-    echo ALLOW $best_ts $best_type $best_idx
+    best_rule="${allow_cron[$idx]}"
   fi
 done
 
@@ -282,17 +276,16 @@ for idx in "${!block_cron[@]}"; do
   if [[ $ts -gt $best_ts ]]; then
     best_ts=$ts
     best_type="block"
-    best_idx=$idx
-    echo BLOCK $best_ts $best_type $best_idx
+    best_rule="${block_cron[$idx]}"
   fi
 done
 
 if [[ $best_type == "allow" ]]; then
-  echo "Applying allow rule for $rule"
+  echo "Applying allow rule: $best_rule"
   ln -sf "$ALLOW_FILE" "$CURRENT_FILE"
   unbound-control reload || systemctl reload unbound
 elif [[ $best_type == "block" ]]; then
-  echo "Applying block rule for $rule"
+  echo "Applying block rule: $best_rule"
   ln -sf "$BLOCK_FILE" "$CURRENT_FILE"
   unbound-control reload || systemctl reload unbound
 else
