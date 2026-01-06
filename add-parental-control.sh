@@ -209,41 +209,63 @@ unbound-control reload || systemctl reload unbound
 
 echo "Determining which rule to apply .."
 
-# Get current timestamp
+# Helper: get last matching time for a cron rule before now
+get_last_cron_time() {
+  local cron_expr="$1"
+  local now=$(date +'%M %H %d %m %u %s')
+  local min hour day mon dow now_ts
+  read min hour day mon dow now_ts <<< "$now"
+
+  # Only support single values (no ranges/lists/steps)
+  local cmin chour cday cmon cdow
+  read cmin chour cday cmon cdow <<< "$cron_expr"
+
+  # Try today, then go back up to 7 days
+  for ((i=0; i<7; i++)); do
+    try_day=$(date -d "$i day ago" +'%d %m %u')
+    read tday tmon tdow <<< "$try_day"
+    if { [[ $cday == "*" || $cday == $tday ]] && \
+         [[ $cmon == "*" || $cmon == $tmon ]] && \
+         [[ $cdow == "*" || $cdow == $tdow ]]; }; then
+      tstamp=$(date -d "$tmon/$tday $(date +%Y) $chour:$cmin" +%s 2>/dev/null)
+      if [[ $tstamp && $tstamp -le $now_ts ]]; then
+        echo $tstamp
+        return
+      fi
+    fi
+  done
+  echo 0
+}
+
 now_ts=$(date +%s)
 last_allow_ts=0
 last_block_ts=0
 
-# Find the most recent allow_cron time
 for cron_expr in "${allow_cron[@]}"; do
-  cron_time=$(echo "$cron_expr" | awk '{print $1, $2, $3, $4, $5}')
-  ts=$(date -d "$(echo "$cron_time" | awk '{print $2":"$1" "$3" "$4" *"}')" +%s 2>/dev/null)
-  if [[ $ts && $ts -le $now_ts && $ts -gt $last_allow_ts ]]; then
+  ts=$(get_last_cron_time "$cron_expr")
+  if [[ $ts -gt $last_allow_ts ]]; then
     last_allow_ts=$ts
   fi
 done
 
-# Find the most recent block_cron time
 for cron_expr in "${block_cron[@]}"; do
-  cron_time=$(echo "$cron_expr" | awk '{print $1, $2, $3, $4, $5}')
-  ts=$(date -d "$(echo "$cron_time" | awk '{print $2":"$1" "$3" "$4" *"}')" +%s 2>/dev/null)
-  if [[ $ts && $ts -le $now_ts && $ts -gt $last_block_ts ]]; then
+  ts=$(get_last_cron_time "$cron_expr")
+  if [[ $ts -gt $last_block_ts ]]; then
     last_block_ts=$ts
   fi
 done
 
-# Decide which rule to apply
 if [[ $last_allow_ts -ge $last_block_ts ]]; then
   echo "Applying allow rule for $rule ..."
   ln -sf "$ALLOW_FILE" "$CURRENT_FILE"
-  echo "Reloading Unbound..."
   unbound-control reload || systemctl reload unbound
 else
   echo "Applying block rule for $rule ..."
   ln -sf "$BLOCK_FILE" "$CURRENT_FILE"
-  echo "Reloading Unbound..."
   unbound-control reload || systemctl reload unbound
 fi
+
+
 
 
 
