@@ -1,10 +1,22 @@
-# Unbound Parental Control
+# AmanaGate
+AmanaGate is a lightweight, high-performance deployment framework for Unbound DNS, specifically optimized for resource-constrained environments like the Raspberry Pi Zero.
 
-A minimalistic script to deploy [Unbound](https://nlnetlabs.nl/projects/unbound/about/) on Raspberry Pi devices, enhancing DNS resolution with parental control capabilities. This project has been tested on Raspberry Pi Zero (512MB RAM) running [DietPi](https://dietpi.com/).
+The name derives from the Arabic/Swahili word "Amana", representing trust or something held in safekeeping. True to its name, AmanaGate serves as a "Trust Gateway" for your home network, providing parents with granular control over digital boundaries without compromising privacy or performance.
 
-As a parent, managing children’s screen time and access to online games such as Roblox and Bloxio, as well as YouTube, is a growing challenge. While commercial solutions exist, this project aims to provide a privacy-respecting, cost-effective alternative for home networks.
+## 🚀 Overview
+AmanaGate transforms a standard Raspberry Pi into a dedicated recursive DNS resolver. By intercepting requests at the network level, it allows for the seamless management of access to gaming platforms (Roblox, Bloxio), social media, and streaming services like YouTube—all through a privacy-first, self-hosted architecture.
 
----
+# Key Features
+* Minimalist Footprint: Architected for low-memory devices; fully tested on Raspberry Pi Zero (512MB RAM).
+* DietPi Optimized: Tailored for the DietPi ecosystem for maximum efficiency and stability.
+* Privacy-Centric: Eliminates reliance on third-party commercial parental control suites and data-logging DNS providers.
+* Recursive Resolution: Improves security by communicating directly with Root Nameservers.
+* Custom DNS A record management: Allows you to refine own DNS records in a friendly `hosts` file format
+
+🛠 Target Environment
+_Hardware_: Raspberry Pi Series (Optimized for Zero/Zero W)
+_OS_: DietPi (recommended) or any Debian-based distributions (Ubuntu, Kubuntu, etc.)
+_Service_: Unbound DNS / cron
 
 ## 🚩 Basic Installation
 
