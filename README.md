@@ -53,9 +53,9 @@ sudo ./install.sh ./conf/local-lan.txt
 Test DNS resolution for a configured hostname to ensure the setup is functioning:
 
 ```sh
-dig @localhost amd
+dig @localhost kid1-pc
 ```
-Replace `amd` with any hostname you defined in your hosts file.
+Replace `kid1-pc` with any hostname you defined in your hosts file.
 
 
 ### 4. Uninstall Unbound and the entire configuration
@@ -105,7 +105,7 @@ domain2.net
 
 **Example:**
 ```sh
-sudo ./add-parental-control.sh ./conf/jonas.ini
+sudo ./add-parental-control.sh ./conf/games.ini
 ```
 
 ### Remove Parental Control Rules
@@ -113,7 +113,7 @@ sudo ./add-parental-control.sh ./conf/jonas.ini
 To remove previously configured parental control rules, run:
 
 ```sh
-sudo ./remove-parental-control.sh ./conf/jonas.ini
+sudo ./remove-parental-control.sh ./conf/games.ini
 ```
 
 
