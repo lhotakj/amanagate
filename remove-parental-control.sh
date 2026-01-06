@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+echo "♦ AmanaGate - remove parental control rules"
 
 show_help() {
   echo "Usage: $0 <config.ini>"
@@ -50,7 +51,7 @@ VIEW_FILE="$UNBOUND_DIR/unbound.conf.d/view-$rule.conf"
 ALLOW_FILE="$UNBOUND_DIR/${rule}-allow.conf"
 BLOCK_FILE="$UNBOUND_DIR/${rule}-blocklist.conf"
 CURRENT_FILE="$UNBOUND_DIR/${rule}-current.conf"
-CRON_FILE="/etc/cron.d/${rule}-dns-schedule"
+CRON_FILE="/etc/cron.d/amanagate-${rule}-dns-schedule"
 
 echo "=== Removing DNS parental controls for $rule ==="
 

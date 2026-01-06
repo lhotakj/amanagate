@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+echo "♦ AmanaGate - add parental control rules"
 
 show_help() {
   cat <<EOF

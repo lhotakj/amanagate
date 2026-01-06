@@ -1,5 +1,7 @@
 #!/bin/bash
+
 set -e
+echo "♦ AmanaGate - install Unbound"
 
 if [ "$#" -ne 1 ]; then
   echo "Usage: $0 path_to_host_file"
@@ -14,8 +16,9 @@ if [ ! -f "$HOST_FILE" ]; then
 fi
 
 echo "=== Installing Unbound, Unbound Archor, and Dig ==="
+
 apt update
-apt install -y -q unbound unbound-anchor dnsutils at
+apt install -y -q unbound unbound-anchor dnsutils
 
 echo "=== Creating directories ==="
 mkdir -p /etc/unbound/custom
