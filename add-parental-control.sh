@@ -265,13 +265,15 @@ for idx in "${!block_cron[@]}"; do
 done
 
 if [[ $best_type == "allow" ]]; then
-  echo "Applying allow rule for $rule (matched: ${allow_cron[$best_idx]})"
+  echo "Applying allow rule for $rule"
   ln -sf "$ALLOW_FILE" "$CURRENT_FILE"
   unbound-control reload || systemctl reload unbound
-else
-  echo "Applying block rule for $rule (matched: ${block_cron[$best_idx]})"
+elif [[ $best_type == "block" ]]; then
+  echo "Applying block rule for $rule"
   ln -sf "$BLOCK_FILE" "$CURRENT_FILE"
   unbound-control reload || systemctl reload unbound
+else
+  echo "Unexpectedly no rule matched"
 fi
 
 ############################################
