@@ -29,7 +29,7 @@ _Service_: Unbound DNS / cron
 ```sh
 cd /tmp
 git clone https://github.com/lhotakj/amanagate.git
-cd unbound-parental-control
+cd amanagate
 ```
 
 ### 2. Install Unbound and Configure Local Network
