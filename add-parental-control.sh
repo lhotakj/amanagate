@@ -232,23 +232,24 @@ get_last_cron_time() {
   local cmin chour cday cmon cdow
   read cmin chour cday cmon cdow <<< "$cron_expr"
 
-  # Try today, then go back up to 7 days
-  for ((i=0; i<7; i++)); do
+  for ((i=0; i<=7; i++)); do
     try_date=$(date -d "$i day ago" +'%Y %m %d %u')
     read y m d dow <<< "$try_date"
 
-    # Map GNU date %u (1=Mon..7=Sun) to cron DOW (0=Sun..6=Sat)
     if [[ $dow -eq 7 ]]; then
       cron_dow=0
     else
       cron_dow=$dow
     fi
 
-    if { [[ $cday == "*" || $cday == $d ]] && \
-         [[ $cmon == "*" || $cmon == $m ]] && \
-         cron_dow_match "$cdow" "$cron_dow"; }; then
-      tstamp=$(date -d "$y-$m-$d $chour:$cmin" +%s 2>/dev/null)
-      if [[ $tstamp && $tstamp -le $now_ts ]]; then
+    echo "DEBUG: cron='$cron_expr' checking $y-$m-$d dow=$cron_dow against cdow=$cdow" >&2
+
+    if [[ ($cday == "*" || $cday -eq $d) && \
+          ($cmon == "*" || $cmon -eq $m) ]] && \
+       cron_dow_match "$cdow" "$cron_dow"; then
+      tstamp=$(date -d "$y-$m-$d $chour:$cmin:00" +%s 2>/dev/null)
+      echo "DEBUG: day matched, tstamp=$tstamp now=$now_ts" >&2
+      if [[ -n $tstamp && $tstamp -le $now_ts ]]; then
         echo $tstamp
         return
       fi
@@ -256,6 +257,7 @@ get_last_cron_time() {
   done
   echo 0
 }
+
 
 
 now_ts=$(date +%s)
