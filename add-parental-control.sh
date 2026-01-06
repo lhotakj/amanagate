@@ -251,7 +251,7 @@ for idx in "${!allow_cron[@]}"; do
     best_ts=$ts
     best_type="allow"
     best_idx=$idx
-    print ALLOW $best_ts $best_type $best_idx
+    echo ALLOW $best_ts $best_type $best_idx
   fi
 done
 
@@ -262,7 +262,7 @@ for idx in "${!block_cron[@]}"; do
     best_ts=$ts
     best_type="block"
     best_idx=$idx
-    print BLOCK $best_ts $best_type $best_idx
+    echo BLOCK $best_ts $best_type $best_idx
   fi
 done
 
