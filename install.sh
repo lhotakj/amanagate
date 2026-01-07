@@ -53,9 +53,9 @@ forward-zone:
     forward-addr: 2a10:50c0::ad2:ff
 
 remote-control:
-  control-enable: yes
-  control-interface: 127.0.0.1
-  control-port: 8953
+    control-enable: yes
+    control-interface: 127.0.0.1
+    control-port: 8953
 EOF
 
 echo "=== Running unbound-anchor ==="
