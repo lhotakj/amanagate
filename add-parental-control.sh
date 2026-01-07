@@ -155,9 +155,8 @@ echo "" > "$ALLOW_FILE"
 
 echo "Generating blocklist..."
 : > "$BLOCK_FILE"
-echo "server:" >> "$BLOCK_FILE"
 for domain in "${domains[@]}"; do
-  echo "    local-zone: \"${domain}.\" refuse" >> "$BLOCK_FILE"
+  echo "local-zone: \"${domain}.\" refuse" >> "$BLOCK_FILE"
 done
 
 ############################################
